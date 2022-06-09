@@ -3,9 +3,9 @@ package client
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/acernik/word-of-wisdom/internal/config"
 	"net"
 
-	"github.com/acernik/word-of-wisdom/internal/constants"
 	"github.com/acernik/word-of-wisdom/internal/models"
 )
 
@@ -16,11 +16,15 @@ type Requester interface {
 }
 
 // requester is the type that implements the Requester interface.
-type requester struct{}
+type requester struct {
+	cfg *config.Config
+}
 
 // New returns the value of type that implements the Requester interface.
-func New() Requester {
-	return &requester{}
+func New(cfg *config.Config) (Requester, error) {
+	return &requester{
+		cfg: cfg,
+	}, nil
 }
 
 // MakeInitialRequest makes the initial request to the server requesting a quote. The server will respond with
@@ -28,14 +32,14 @@ func New() Requester {
 func (r *requester) MakeInitialRequest(tcpAddr *net.TCPAddr) (models.Response, error) {
 	var initialResponse models.Response
 
-	conn, err := net.DialTCP(constants.Network, nil, tcpAddr)
+	conn, err := net.DialTCP(r.cfg.App.Network, nil, tcpAddr)
 	if err != nil {
 		return initialResponse, err
 	}
 
 	initialRequest := models.Request{
-		Type: constants.RequestTypeInitial,
-		Data: constants.InitialRequestMessage,
+		Type: r.cfg.App.RequestTypeInitial,
+		Data: r.cfg.App.InitialRequestMessage,
 	}
 
 	initialRequestBytes, err := json.Marshal(initialRequest)
@@ -79,7 +83,7 @@ func (r *requester) MakePowSolutionRequest(solution string, tcpAddr *net.TCPAddr
 	var quoteResponse models.Response
 
 	powSolutionRequest := models.Request{
-		Type: constants.RequestTypePowSolution,
+		Type: r.cfg.App.RequestTypePowSolution,
 		Data: solution,
 	}
 
@@ -88,7 +92,7 @@ func (r *requester) MakePowSolutionRequest(solution string, tcpAddr *net.TCPAddr
 		return quoteResponse, err
 	}
 
-	conn, err := net.DialTCP(constants.Network, nil, tcpAddr)
+	conn, err := net.DialTCP(r.cfg.App.Network, nil, tcpAddr)
 	if err != nil {
 		return quoteResponse, err
 	}

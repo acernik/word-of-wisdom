@@ -12,7 +12,7 @@ type Request struct {
 	Data string `json:"data"`
 }
 
-// Response holds the data sent with the response to the app.
+// Response holds the data sent with the response to the cli.
 type Response struct {
 	Type  string       `json:"type"`
 	Quote quotes.Quote `json:"quote"`

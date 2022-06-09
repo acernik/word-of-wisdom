@@ -1,15 +1,20 @@
 package main
 
 import (
+	"github.com/acernik/word-of-wisdom/internal/config"
 	"net"
 
-	"github.com/acernik/word-of-wisdom/internal/constants"
 	"github.com/acernik/word-of-wisdom/internal/quotes"
 	"github.com/acernik/word-of-wisdom/internal/srv"
 )
 
 func main() {
-	listen, err := net.Listen(constants.Network, constants.Address)
+	cfg, err := config.New()
+	if err != nil {
+		panic(err)
+	}
+
+	listen, err := net.Listen(cfg.App.Network, cfg.App.ServerAddress)
 	if err != nil {
 		panic(err)
 	}
@@ -18,7 +23,10 @@ func main() {
 
 	qp := quotes.New(quotes.Quotes)
 
-	h := srv.New()
+	h, err := srv.New(cfg)
+	if err != nil {
+		panic(err)
+	}
 
 	for {
 		conn, err := listen.Accept()

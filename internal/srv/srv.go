@@ -6,7 +6,7 @@ import (
 	"log"
 	"net"
 
-	"github.com/acernik/word-of-wisdom/internal/constants"
+	"github.com/acernik/word-of-wisdom/internal/config"
 	"github.com/acernik/word-of-wisdom/internal/models"
 	"github.com/acernik/word-of-wisdom/internal/pow"
 	"github.com/acernik/word-of-wisdom/internal/quotes"
@@ -19,11 +19,14 @@ type Handler interface {
 
 // handler is the type that implements the Handler interface.
 type handler struct {
+	cfg *config.Config
 }
 
 // New returns a new value of type that implements the Handler interface.
-func New() Handler {
-	return &handler{}
+func New(cfg *config.Config) (Handler, error) {
+	return &handler{
+		cfg: cfg,
+	}, nil
 }
 
 // HandleRequest handles incoming requests from clients.
@@ -44,9 +47,9 @@ func (h *handler) HandleRequest(conn net.Conn, qp quotes.Picker) {
 	}
 
 	switch request.Type {
-	case constants.RequestTypeInitial:
+	case h.cfg.App.RequestTypeInitial:
 		initialResponse := models.Response{
-			Type:  constants.ResponseTypePow,
+			Type:  h.cfg.App.ResponseTypePow,
 			Quote: quotes.Quote{},
 		}
 		initialResponseBytes, err := json.Marshal(initialResponse)
@@ -58,8 +61,12 @@ func (h *handler) HandleRequest(conn net.Conn, qp quotes.Picker) {
 		if err != nil {
 			log.Fatal(err)
 		}
-	case constants.RequestTypePowSolution:
-		gp := pow.New()
+	case h.cfg.App.RequestTypePowSolution:
+		gp, err := pow.New()
+		if err != nil {
+			log.Fatal(err)
+		}
+
 		valid, err := gp.Verify(request.Data)
 		if err != nil {
 			log.Fatal(err)
@@ -67,7 +74,7 @@ func (h *handler) HandleRequest(conn net.Conn, qp quotes.Picker) {
 
 		if !valid {
 			initialResponse := models.Response{
-				Type:  constants.ResponseTypePowInvalid,
+				Type:  h.cfg.App.ResponseTypePowInvalid,
 				Quote: quotes.Quote{},
 			}
 			initialResponseBytes, err := json.Marshal(initialResponse)
@@ -94,7 +101,7 @@ func (h *handler) HandleRequest(conn net.Conn, qp quotes.Picker) {
 		}
 
 		result := models.Response{
-			Type:  constants.ResponseTypePowValid,
+			Type:  h.cfg.App.ResponseTypePowValid,
 			Quote: quote,
 		}
 

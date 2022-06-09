@@ -112,6 +112,10 @@ var (
 
 // PickQuoteIndex picks a random quote element index from the quotes array.
 func (qp *quotesPicker) PickQuoteIndex() (int64, error) {
+	if len(qp.quotesList) <= 0 {
+		return 0, fmt.Errorf("quotes list must contain at least one quote")
+	}
+
 	nBig, err := rand.Int(rand.Reader, big.NewInt(int64(len(qp.quotesList))))
 	if err != nil {
 		return 0, err

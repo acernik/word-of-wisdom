@@ -5,24 +5,35 @@ import (
 	"net"
 
 	"github.com/acernik/word-of-wisdom/internal/client"
-	"github.com/acernik/word-of-wisdom/internal/constants"
+	"github.com/acernik/word-of-wisdom/internal/config"
 	"github.com/acernik/word-of-wisdom/internal/pow"
 )
 
 func main() {
-	tcpAddr, err := net.ResolveTCPAddr(constants.Network, constants.Address)
+	cfg, err := config.New()
+	if err != nil {
+		panic(err)
+	}
+
+	tcpAddr, err := net.ResolveTCPAddr(cfg.App.Network, cfg.App.ClientAddress)
 	if err != nil {
 		panic(err)
 	}
 
 	// Create a new value of type client Requester.
-	cr := client.New()
+	cr, err := client.New(cfg)
+	if err != nil {
+		panic(err)
+	}
 
 	// Make initial request to the server which will request to do the PoW.
 	_, err = cr.MakeInitialRequest(tcpAddr)
+	if err != nil {
+		panic(err)
+	}
 
 	// Perform PoW.
-	pg := pow.New()
+	pg, err := pow.New()
 	if err != nil {
 		panic(err)
 	}
@@ -38,7 +49,7 @@ func main() {
 		panic(err)
 	}
 
-	if result.Type == constants.ResponseTypePowInvalid {
+	if result.Type == cfg.App.ResponseTypePowInvalid {
 		fmt.Println("The PoW solution was invalid, please try again.")
 		return
 	}

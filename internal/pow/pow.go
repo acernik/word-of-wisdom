@@ -16,18 +16,21 @@ type generator struct {
 }
 
 // New returns the value of type that implements the Generator interface.
-func New() Generator {
-	hc, _ := hashcash.New(
+func New() (Generator, error) {
+	hc, err := hashcash.New(
 		&hashcash.Resource{
 			Data:          "someone@gmail.com",
 			ValidatorFunc: validateResource,
 		},
 		nil,
 	)
+	if err != nil {
+		return nil, err
+	}
 
 	return &generator{
 		hc: hc,
-	}
+	}, nil
 }
 
 // validateResource is used when it is necessary to validate the resource. E.g. to check if email is in database.
@@ -53,7 +56,11 @@ func (g *generator) GetPowSolution() (string, error) {
 	for {
 		solution, err = hc.Compute()
 		if err != nil {
-			return solution, err
+			if err != hashcash.ErrSolutionFail {
+				return solution, err
+			}
+
+			continue
 		}
 
 		valid, err := hc.Verify(solution)

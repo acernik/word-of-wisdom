@@ -1,0 +1,26 @@
+# Start from the latest golang base image.
+FROM golang:latest as builder
+
+# Create build directory.
+RUN mkdir build
+
+# Copy project to build directory.
+COPY . /build
+
+# Set build as working directory.
+WORKDIR /build/cmd/cli
+
+# Copy the config file.
+COPY ./config.yml /build/cmd/cli
+
+# Fetch dependencies.
+RUN go mod download
+
+# Build the Go app.
+RUN CGO_ENABLED=1 GOOS=linux go build -a -installsuffix cgo -ldflags '-extldflags "-static"' -o main
+
+# Expose port 9002.
+EXPOSE 9002 9001
+
+# Command to run the executables.
+CMD ["sh", "-c", "./main"]

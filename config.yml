@@ -1,0 +1,10 @@
+app:
+  network: 'tcp'
+  server_address: '0.0.0.0:9001'
+  client_address: '192.168.1.210:9001'
+  request_type_initial: 'INITIAL'
+  response_type_pow: 'POW_REQUEST'
+  response_type_pow_invalid: 'POW_INVALID'
+  response_type_pow_valid: 'POW_VALID'
+  request_type_pow_solution: 'POW_SOLUTION'
+  initial_request_message: 'Hello, can I get a quote please?'

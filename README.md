@@ -19,7 +19,7 @@ For the purpose of this task the Hashcash algorithm was not implemented from scr
 was used --> `https://github.com/umahmood/hashcash`.
 
 ## Unit tests
-Not implemented yet.
+To run unit tests execute `make tests` command from the root directory. This will run all unit tests with coverage.
 
 ## Usage
 To run the app first run the `make server` command. This will start the server which is now accepting TCP requests.
