@@ -3,9 +3,9 @@ package client
 import (
 	"bytes"
 	"encoding/json"
-	"github.com/acernik/word-of-wisdom/internal/config"
 	"net"
 
+	"github.com/acernik/word-of-wisdom/internal/config"
 	"github.com/acernik/word-of-wisdom/internal/models"
 )
 

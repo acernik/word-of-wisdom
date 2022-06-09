@@ -1,10 +1,10 @@
 package client
 
 import (
-	"github.com/acernik/word-of-wisdom/internal/config"
 	"net"
 	"testing"
 
+	"github.com/acernik/word-of-wisdom/internal/config"
 	"github.com/acernik/word-of-wisdom/internal/pow"
 	"github.com/acernik/word-of-wisdom/internal/quotes"
 	"github.com/acernik/word-of-wisdom/internal/srv"
