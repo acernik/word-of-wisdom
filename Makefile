@@ -16,12 +16,15 @@ dkr-srv:
 
 launch-srv: dkb-srv dkr-srv
 
+exp_addr:
+	./run_cli.sh
+
 dkb-cli:
 	docker build -f Dockerfile.client -t client .
 
 dkr-cli:
 	docker run -p "9002:9001" client
 
-launch-cli: dkb-cli dkr-cli
+launch-cli: exp_addr dkb-cli dkr-cli
 
-PHONY: client server tests dkb-srv dkr-srv launch-srv dkb-cli dkr-cli launch-cli
+PHONY: client server tests dkb-srv dkr-srv launch-srv exp_addr dkb-cli dkr-cli launch-cli

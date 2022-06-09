@@ -28,4 +28,9 @@ make a request to the server which will ask to perform the PoW and once the PoW 
 a quote from Word Of Wisdom.
 
 ## Docker
-Not implemented yet.
+Both `server` and `client` applications have `Dockerfile` each. `client` is `Dockerfile.client` and 
+`server` is `Dockerfile.server`.
+
+To run those files you need to run the following commands:
+- `make launch-srv` to run `server` 
+- `make launch-cli` to run `client`
